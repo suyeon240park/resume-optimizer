@@ -1,0 +1,20 @@
+# Environment secrets — never commit these
+backend/.env
+web/.env.local
+
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/**/*.pyc
+backend/**/*.pyo
+
+# Node
+extension/node_modules/
+web/node_modules/
+extension/dist/
+
+# OS
+.DS_Store
+Thumbs.db

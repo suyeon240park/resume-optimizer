@@ -1,0 +1,79 @@
+%-------------------------
+% Resume in LaTeX (Jake Gutierrez template)
+%-------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeItem}[1]{
+  \item\small{#1 \vspace{-2pt}}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \small #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Huge \scshape Suyeon Park} \\ \vspace{1pt}
+    \small 123-456-7890 $|$ \href{mailto:suyeon@example.com}{suyeon@example.com}
+\end{center}
+
+\section{Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Software Developer}{May 2025 -- Present}
+      {407 ETR}{Woodbridge, ON}
+      \resumeItemListStart
+        \resumeItem{Built scalable distributed data pipeline processing 2M+ toll records daily using Apache Kafka and Python}
+        \resumeItem{Reduced container memory usage by 80\% by migrating from monolithic to microservice architecture}
+      \resumeItemListEnd
+    \resumeSubheading
+      {Backend Developer Intern}{Jan 2025 -- Apr 2025}
+      {Acme Corp}{Toronto, ON}
+      \resumeItemListStart
+        \resumeItem{Developed REST API endpoints using Spring Boot serving 500 requests per second}
+        \resumeItem{Implemented CI/CD pipeline with GitHub Actions reducing deployment time from 30min to 5min}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Projects}
+  \resumeSubHeadingListStart
+    \resumeProjectHeading
+      {\textbf{Cloud Cost Analyzer} $|$ \emph{Python, AWS, Terraform}}{Jan 2025}
+      \resumeItemListStart
+        \resumeItem{Built cost analysis dashboard tracking \$50K monthly AWS spend across 12 accounts}
+        \resumeItem{Implemented anomaly detection with O(n \log n) algorithm flagging 95\% of billing spikes}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Skills}
+  \resumeSubHeadingListStart
+    \resumeItem{Languages: Python, Java, TypeScript, SQL}
+    \resumeItem{Frameworks: Spring Boot, FastAPI, React}
+    \resumeItem{Tools: Docker, Kubernetes, AWS, Terraform, GitHub Actions}
+  \resumeSubHeadingListEnd
+
+\end{document}

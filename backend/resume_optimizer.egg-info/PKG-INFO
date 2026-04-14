@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: resume-optimizer
+Version: 0.1.0
+Summary: LaTeX resume optimizer powered by Claude — tailors your resume to job descriptions while preserving your exact template.
+Requires-Python: >=3.11
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn[standard]>=0.34
+Requires-Dist: anthropic>=0.49
+Requires-Dist: sqlalchemy[asyncio]>=2.0
+Requires-Dist: asyncpg>=0.30
+Requires-Dist: alembic>=1.15
+Requires-Dist: pydantic-settings>=2.8
+Requires-Dist: python-multipart>=0.0.20
+Requires-Dist: google-auth>=2.38
+Requires-Dist: PyJWT>=2.10
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.25; extra == "dev"
+Requires-Dist: httpx>=0.28; extra == "dev"
+Requires-Dist: aiosqlite>=0.21; extra == "dev"

@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Resume Optimizer",
+  "version": "1.0.0",
+  "description": "Scrape job descriptions and optimize your LaTeX resume with AI",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.greenhouse.io/*",
+        "*://*.lever.co/*",
+        "*://*.myworkdayjobs.com/*",
+        "*://*.ashbyhq.com/*",
+        "*://*.icims.com/*",
+        "*://*.bamboohr.com/*",
+        "*://*.smartrecruiters.com/*",
+        "*://*.linkedin.com/jobs/*",
+        "*://*.indeed.com/*",
+        "*://*.glassdoor.com/job-listing/*",
+        "*://*.glassdoor.com/Job/*",
+        "*://*/*jobs*",
+        "*://*/*careers*",
+        "*://*/*positions*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["sidebar/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

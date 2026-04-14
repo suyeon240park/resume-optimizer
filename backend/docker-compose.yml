@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: resume_optimizer
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  latex-compiler:
+    image: texlive/texlive:latest-full
+    volumes:
+      - compile-queue:/work
+    working_dir: /work
+    entrypoint: ["tail", "-f", "/dev/null"]
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - compile-queue:/tmp/latex-compile
+    depends_on:
+      - db
+      - latex-compiler
+
+volumes:
+  pgdata:
+  compile-queue:
