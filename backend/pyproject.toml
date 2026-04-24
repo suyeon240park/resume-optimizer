@@ -13,6 +13,7 @@ dependencies = [
     "pydantic-settings>=2.8",
     "python-multipart>=0.0.20",
     "google-auth>=2.38",
+    "requests>=2.31",
     "PyJWT>=2.10",
     "slowapi>=0.1.9",
 ]
