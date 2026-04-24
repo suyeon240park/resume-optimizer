@@ -40,7 +40,7 @@ export default function DashboardPage() {
           <DialogTrigger render={<Button />}>
             New Application
           </DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[min(90dvh,calc(100vh-2rem))] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add Application</DialogTitle>
             </DialogHeader>
