@@ -70,6 +70,26 @@ def _extract_brace_arg(source: str, pos: int) -> tuple[str, int] | None:
     return None
 
 
+def _mask_comments(source: str) -> str:
+    """Hide LaTeX comments without changing offsets or line boundaries."""
+    chars = list(source)
+    i = 0
+    while i < len(source):
+        if source[i] == "%":
+            backslashes = 0
+            j = i - 1
+            while j >= 0 and source[j] == "\\":
+                backslashes += 1
+                j -= 1
+            if backslashes % 2 == 0:
+                while i < len(source) and source[i] not in "\r\n":
+                    chars[i] = " "
+                    i += 1
+                continue
+        i += 1
+    return "".join(chars)
+
+
 class LaTeXParser:
     """
     Parses a LaTeX resume into a content tree.
@@ -104,29 +124,30 @@ class LaTeXParser:
 
     def __init__(self, source: str):
         self.source = source
+        self._parse_source = _mask_comments(source)
         self.commands: dict[str, int] = dict(self.BUILTIN_COMMANDS)
         self._discover_commands()
 
     def _discover_commands(self) -> None:
         """Scan for ``\\newcommand`` / ``\\renewcommand`` and extract arity."""
         pattern = r"\\(?:re)?newcommand\{\\(\w+)\}\s*\[(\d+)\]"
-        for m in re.finditer(pattern, self.source):
+        for m in re.finditer(pattern, self._parse_source):
             name = m.group(1)
             if name not in self.ENVIRONMENT_MARKERS:
                 self.commands[name] = int(m.group(2))
 
     def _body_range(self) -> tuple[int, int]:
         """Return (start, end) byte offsets of the document body."""
-        begin = re.search(r"\\begin\{document\}", self.source)
-        end = re.search(r"\\end\{document\}", self.source)
+        begin = re.search(r"\\begin\{document\}", self._parse_source)
+        end = re.search(r"\\end\{document\}", self._parse_source)
         start = begin.end() if begin else 0
-        stop = end.start() if end else len(self.source)
+        stop = end.start() if end else len(self._parse_source)
         return start, stop
 
     def extract_sections(self) -> list[Section]:
         """Extract all ``\\section{...}`` blocks and their child content nodes."""
         body_start, body_end = self._body_range()
-        body = self.source[body_start:body_end]
+        body = self._parse_source[body_start:body_end]
 
         section_pat = re.compile(r"\\section\{([^}]*)\}")
         matches = list(section_pat.finditer(body))
@@ -165,7 +186,7 @@ class LaTeXParser:
                     valid = False
                     break
                 arg_text, pos = result
-                args.append(arg_text)
+                args.append(self.source[offset + pos - len(arg_text) - 1 : offset + pos - 1])
             if not valid:
                 continue
             node = ContentNode(
@@ -225,3 +246,4 @@ class LaTeXParser:
             rebuilt = f"\\{node.command}" + "".join(f"{{{a}}}" for a in new_args)
             result = result[: node.source_start] + rebuilt + result[node.source_end :]
         return result
+

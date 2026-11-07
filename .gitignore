@@ -1,6 +1,8 @@
 # Environment secrets — never commit these
-backend/.env
-web/.env.local
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.local.example
 
 # Python
 backend/.venv/
@@ -18,3 +20,8 @@ extension/dist/
 # OS
 .DS_Store
 Thumbs.db
+
+
+# Generated package metadata and extension bundles
+**/*.egg-info/
+extension/*.zip

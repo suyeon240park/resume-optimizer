@@ -76,40 +76,63 @@ class TestSectionExtraction:
         names = [s.name for s in sections]
         assert "Experience" in names
         assert "Projects" in names
-        assert "Skills" in names
+        assert names == ["Education", "Experience", "Projects", "Technical Skills"]
 
     def test_experience_has_subheadings(self):
         parser = LaTeXParser(_load_fixture())
         sections = parser.extract_sections()
         exp = next(s for s in sections if s.name == "Experience")
         subheadings = [n for n in exp.nodes if n.command == "resumeSubheading"]
-        assert len(subheadings) == 2
-        assert subheadings[0].args[0] == "Software Developer"
-        assert subheadings[1].args[0] == "Backend Developer Intern"
+        assert len(subheadings) == 3
+        assert subheadings[0].args[0] == "Undergraduate Research Assistant"
+        assert subheadings[1].args[0] == "Information Technology Support Specialist"
 
     def test_items_nested_under_subheading(self):
         parser = LaTeXParser(_load_fixture())
         sections = parser.extract_sections()
         exp = next(s for s in sections if s.name == "Experience")
         first_sub = next(n for n in exp.nodes if n.command == "resumeSubheading")
-        assert len(first_sub.children) == 2
-        assert "data pipeline" in first_sub.children[0].args[0]
-        assert "container memory" in first_sub.children[1].args[0]
+        assert len(first_sub.children) == 3
+        assert "FastAPI and PostgreSQL" in first_sub.children[0].args[0]
+        assert "Flask, React, PostgreSQL and Docker" in first_sub.children[1].args[0]
 
     def test_project_heading_with_nested_braces(self):
         parser = LaTeXParser(_load_fixture())
         sections = parser.extract_sections()
         proj = next(s for s in sections if s.name == "Projects")
         heading = next(n for n in proj.nodes if n.command == "resumeProjectHeading")
-        assert "Cloud Cost Analyzer" in heading.args[0]
+        assert r"\textbf{Gitlytics}" in heading.args[0]
+        assert r"\emph{Python, Flask, React, PostgreSQL, Docker}" in heading.args[0]
 
     def test_nested_braces_in_item(self):
         parser = LaTeXParser(_load_fixture())
+        exp = next(s for s in parser.extract_sections() if s.name == "Experience")
+        item = exp.nodes[0].children[0]
+        nested_text = r"Optimized search to $O(n \log n)$ using \textbf{Python}"
+        source = parser.replace_node(item, [nested_text])
+        exp = next(s for s in LaTeXParser(source).extract_sections() if s.name == "Experience")
+        assert exp.nodes[0].children[0].args[0] == nested_text
+
+    def test_ignores_comments_and_preserves_source_offsets(self):
+        source = _load_fixture().replace(
+            r"\section{Experience}", "% \\section{Hidden}\n\\section{Experience}"
+        )
+        parser = LaTeXParser(source)
         sections = parser.extract_sections()
-        proj = next(s for s in sections if s.name == "Projects")
-        heading = next(n for n in proj.nodes if n.command == "resumeProjectHeading")
-        anomaly_item = heading.children[1]
-        assert r"O(n \log n)" in anomaly_item.args[0]
+        assert "Hidden" not in [s.name for s in sections]
+        exp = next(s for s in sections if s.name == "Experience")
+        assert all("Apache Beam" not in c.args[0] for n in exp.nodes for c in n.children)
+        item = exp.nodes[0].children[0]
+        assert source[item.source_start:item.source_end] == r"\resumeItem{" + item.args[0] + "}"
+        updated = parser.replace_node(item, ["Replacement"])
+        assert "% \\section{Hidden}" in updated
+        assert r"%        \resumeItem{Apache Beam}" in updated
+
+    def test_escaped_percent_is_content(self):
+        source = r"\section{Experience}\resumeItem{Saved 80\% of time} % \resumeItem{Hidden}"
+        sections = LaTeXParser(source).extract_sections()
+        assert len(sections[0].nodes) == 1
+        assert sections[0].nodes[0].args[0] == r"Saved 80\% of time"
 
 
 # ------------------------------------------------------------------
@@ -131,7 +154,7 @@ class TestReconstruction:
         assert new_text in new_source
         assert first_item.args[0] not in new_source
         # Everything else untouched
-        assert "Reduced container memory" in new_source
+        assert "Developed a full-stack web application using Flask" in new_source
         assert r"\documentclass" in new_source
 
     def test_apply_multiple_mutations(self):
@@ -160,3 +183,4 @@ class TestReconstruction:
         data = parser.to_json()
         assert isinstance(data, list)
         assert all("name" in s and "entries" in s for s in data)
+

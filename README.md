@@ -48,7 +48,7 @@ AI-powered LaTeX resume optimizer that tailors your resume to specific job descr
 ### 1. Clone and navigate
 
 ```bash
-git clone <your-repo-url> resume-optimizer
+git clone https://github.com/suyeon240park/resume-optimizer.git
 cd resume-optimizer
 ```
 
@@ -409,6 +409,35 @@ resume-optimizer/
 - **Message-passing architecture**: The Chrome extension sidebar never holds auth tokens or makes direct API calls. Everything flows through the background service worker with sender validation and path allowlisting.
 - **Zero-trust API proxy**: The background service worker validates every API call against a regex-based path allowlist, rejects path traversal, and only accepts messages from extension pages (not content scripts).
 
+## Sample Data and Human Review
+
+The test fixture in `backend/tests/fixtures/jake_resume.tex` contains Jake's
+sample resume, with its original author and template attribution. It is demo
+data and does not describe the project author's work history.
+
+Optimization produces proposed changes for review. Users can approve, reject,
+or edit suggestions before applying them to a new version. The generation
+prompt instructs Claude to preserve factual experience; users must verify the
+suggestions themselves. This prompt is guidance, not a guarantee against
+incorrect output. No real candidate data or API credentials are needed to run
+the mocked backend tests.
+
+For a portfolio demo, use this sample resume and a fictional job description;
+show the before/after review screen and the approval controls. Do not include
+private resumes, application records, or credentials in screenshots.
+
+## Repository Hygiene
+
+Copy `extension/.env.example` to `extension/.env` and set your local URLs before
+building the extension. Environment files, generated Python package metadata,
+and extension ZIP bundles are ignored. Create distribution bundles locally
+from `extension/dist/` after configuring and rebuilding the extension.
+
+The repository history retains previous versions of tracked files. Removing a
+file from the current branch does not remove it from earlier commits.
+
 ## License
 
-MIT
+[MIT](LICENSE). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the
+sample resume template's attribution and upstream license notice.
+
